@@ -109,11 +109,27 @@ npx huashu-chrome install
    不只是编程 agent：WorkBuddy、千问办公、豆包工作这类办公 agent，只要能配本地 MCP，
    同样接得上——它们最常干的「查后台数据、填表、跨站搬运」正是登录态最要紧的活。
 2. **自动发现** —— 没列出来的也能认出来。`install` 会扫 home 下的点目录，
-   凡是内容里有 `mcpServers` 的配置文件都算数。实测所有主流产品都守这个惯例
-   （Codex 的 TOML 是唯一异类），所以下个月新冒出来的 agent 不用等更新也能配上。
+   按预设文件名查找含`mcpServers`的配置；Codex的TOML另行适配。
+   这不是任意MCP客户端的通用安装器：OpenCode使用顶层`mcp`与命令数组，当前不支持自动写入，见下方手动配置。
 3. **都不匹配** —— 打印该填的 JSON，你自己贴。
 
-Windows / macOS / Linux 的配置路径都已适配。装完验证：
+**OpenCode手动配置**：依据[官方MCP文档](https://opencode.ai/docs/mcp-servers/)与[配置文档](https://opencode.ai/docs/config/)（2026-09-25核对），在现有全局配置`~/.config/opencode/opencode.json`或`opencode.jsonc`的`mcp`对象中合并以下条目，保留已有设置。实际配置位置以当前OpenCode版本及环境变量为准。
+
+```json
+{
+  "mcp": {
+    "huashu-chrome": {
+      "type": "local",
+      "command": ["npx", "-y", "huashu-chrome", "mcp", "--client", "opencode"],
+      "enabled": true
+    }
+  }
+}
+```
+
+Windows若无法解析`npx`，可按本机安装方式改用`npx.cmd`。这是手动配置说明，不表示`install`已支持OpenCode自动安装。
+
+已知客户端的Windows / macOS / Linux配置路径按`src/agents.json`匹配。装完验证：
 
 ```bash
 npx huashu-chrome doctor
@@ -161,7 +177,7 @@ args = ["-y", "huashu-chrome", "mcp", "--client", "codex"]
 |---|---|
 | `network` | 看页面调了哪些接口、返回什么。字段名是站方写的，不用猜哪个数字是哪个指标 |
 | `fetch` | 带着你的 cookie 调接口。`pages` 一次调用翻完所有页（页码或游标），落盘成每行一页的 JSONL；`binary` 取图片 |
-| `download` | 大文件走浏览器原生下载，不占内存、不弹系统保存框 |
+| `download` | 大文件走浏览器原生下载；可能弹系统保存框，优先尝试`fetch binary + savePath` |
 
 **操作层（要做事，以及读文章）**
 

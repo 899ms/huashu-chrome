@@ -171,3 +171,7 @@ api.bilibili.com/x/polymer/web-dynamic/v1/feed/topic?topic_id=<id>&sort_by=0&pag
   `curl --noproxy '*' 'https://api.bilibili.com/x/space/article?mid=<mid>&pn=1&ps=5'`
   → `data.articles[].id` → `https://www.bilibili.com/read/cv<id>`。
 - 成功弹窗的「点击查看」跳到 `upload-manager/opus`（图文管理），不是文章页。
+
+## 隐藏模板不等于账号状态（2026-09-20补充）
+
+本轮商业化后台的`read_text`读到账号受限提示，但对应容器实际是`display:none`的模板节点，截图中没有该提示。判断当前账号状态时，交叉核对元素可见性、页面截图与相关接口；不能仅凭正文节选中的一句提示下结论。
